@@ -527,17 +527,22 @@ leyaAdapter.initConfig = function (config) {
     initOptions.adUnits = initOptions.options.adUnits || [];
     initOptions.adUnits = initOptions.adUnits.map(value => value.toLowerCase());
 
-    //set tags
-    if(initOptions.options.tags) {
-        Leya.getTags()
-            .then(function(e) {
-                e = e || [];
-                Leya.setTags(e.concat(initOptions.options.tags));
-            })
-            .catch(function(e) {
-                console.log(e);
-            });
+    //version
+    let version = "unknown" || initOptions.options.version || $$PREBID_GLOBAL$$.version;
+
+    let tags = ["version", version];
+    if (initOptions.options.tags) {
+        tags = tags.concat(initOptions.options.tags);
     }
+
+    Leya.getTags()
+        .then(function (e) {
+            e = e || [];
+            Leya.setTags(tags.concat(e));
+        })
+        .catch(function (e) {
+            console.log(e);
+        });
 
     Leya.setKey(initOptions.options.key);
 
