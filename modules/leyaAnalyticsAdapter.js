@@ -508,8 +508,7 @@ let leyaAdapter = Object.assign(adapter({analyticsType}), {
                 handleOtherEvents(eventType, args);
                 break;
         }
-    },
-
+    }
 });
 
 leyaAdapter.originEnableAnalytics = leyaAdapter.enableAnalytics;
