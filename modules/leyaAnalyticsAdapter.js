@@ -544,7 +544,9 @@ leyaAdapter.initConfig = function (config) {
             console.log(e);
         });
 
-    Leya.setKey(initOptions.options.key);
+    if(initOptions.options.key) {
+        Leya.setKey(initOptions.options.key);
+    }
 
     eventsConfig();
 
