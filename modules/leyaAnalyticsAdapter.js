@@ -96,6 +96,28 @@ function extractAdUnitCode(args) {
     return args.adUnitCode.toLowerCase();
 }
 
+/**
+ * Extracts an AdUnit's size from an object args.adUnitCode
+ * @param args
+ * @returns {Array}
+ */
+function extractAdUnitSizes(args) {
+    let sizes = [];
+    if (Array.isArray(args.sizes)) {
+        //http://prebid.org/dev-docs/adunit-reference.html
+        if (Array.isArray(args.sizes[0])) {
+            //may have multiple sizes
+            args.sizes.forEach(function (s) {
+                sizes.push(s[0] + 'x' + s[1]);
+            });
+
+        } else {
+            sizes.push(args.sizes[0] + 'x' + args.sizes[1]);
+        }
+    }
+    return sizes;
+}
+
 
 /**
  * Extracts an AdUnit path from an object args.adUnitCode
@@ -134,6 +156,7 @@ function buildAdUnitAuctionEntity(auction, bidRequest) {
     return {
         'adUnit': extractAdUnitCode(bidRequest),
         'adUnitPath': extractAdUnitPath(bidRequest),
+        'adUnitSizes': extractAdUnitSizes(bidRequest),
         'start': auction.start,
         'timeout': auction.timeout,
         'finish': 0,
@@ -528,7 +551,7 @@ leyaAdapter.initConfig = function (config) {
     initOptions.adUnits = initOptions.adUnits.map(value => value.toLowerCase());
 
     //version
-    let version = "unknown" || initOptions.options.version || $$PREBID_GLOBAL$$.version;
+    let version = initOptions.options.version || $$PREBID_GLOBAL$$.version || "unknown";
 
     let tags = ["version", version];
     if (initOptions.options.tags) {
@@ -544,7 +567,7 @@ leyaAdapter.initConfig = function (config) {
             console.log(e);
         });
 
-    if(initOptions.options.key) {
+    if (initOptions.options.key) {
         Leya.setKey(initOptions.options.key);
     }
 
