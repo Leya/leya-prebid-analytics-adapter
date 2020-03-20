@@ -2,6 +2,8 @@ import adapter from 'src/AnalyticsAdapter';
 import CONSTANTS from 'src/constants.json';
 import adapterManager from 'src/adapterManager';
 import includes from 'core-js/library/fn/array/includes';
+import { logInfo, logError } from '../src/utils.js';
+
 
 const utils = require('src/utils');
 
@@ -404,7 +406,11 @@ function handleBidAfterTimeout(adUnitAuction, args) {
     }
 
     if (isWantedEvent(LEYA_EVENTS.BID_AFTER_TIMEOUT)) {
-        Leya.Events.Prebid.handleBidAfterTimeoutEvent(bidAfterTimeout)
+        if(window.Leya) {
+            Leya.Events.Prebid.handleBidAfterTimeoutEvent(bidAfterTimeout)
+        } else {
+            logError("Can't log event, Leyajs is not defined");
+        }
     }
 }
 
@@ -470,7 +476,12 @@ function handleAuctionEnd(args) {
     }
 
     if (isWantedEvent(LEYA_EVENTS.AUCTION)) {
-        Leya.Events.Prebid.handleAuctionEvent(auction);
+        if(window.Leya) {
+            Leya.Events.Prebid.handleAuctionEvent(auction);
+        } else {
+            logError("Can't log event, Leyajs is not defined");
+        }
+
     }
 }
 
@@ -490,7 +501,11 @@ function handleBidWon(args) {
     let impression = buildImpression(adUnitAuction, args);
 
     if (isWantedEvent(LEYA_EVENTS.IMPRESSION)) {
-        Leya.Events.Prebid.handleImpressionEvent(impression);
+        if(window.Leya) {
+            Leya.Events.Prebid.handleImpressionEvent(impression);
+        } else {
+            logError("Can't log event, Leyajs is not defined");
+        }
     }
 }
 
@@ -558,17 +573,14 @@ leyaAdapter.initConfig = function (config) {
         tags = tags.concat(initOptions.options.tags);
     }
 
-    Leya.getTags()
-        .then(function (e) {
-            e = e || [];
-            Leya.setTags(tags.concat(e));
-        })
-        .catch(function (e) {
-            console.log(e);
-        });
+    if(window.Leya) {
+        Leya.addTags(tags);
 
-    if (initOptions.options.key) {
-        Leya.setKey(initOptions.options.key);
+        if (initOptions.options.key) {
+            Leya.setKey(initOptions.options.key);
+        }
+    } else {
+        logError("Can't set tags and key, Leyajs is not defined");
     }
 
     eventsConfig();
