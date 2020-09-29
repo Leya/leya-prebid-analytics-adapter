@@ -186,7 +186,7 @@ function buildBidderRequest(auction, bidRequest) {
             'height': 0
         },
         'mediaType': '-',
-        'source': bidRequest.source || 'client'
+        'source': bidRequest["source"] || bidRequest["src"] || 'client'
     };
 }
 
@@ -212,7 +212,7 @@ function buildBidAfterTimeout(adUnitAuction, args) {
         },
         'mediaType': args.mediaType || '-',
         'start': args.requestTimestamp,
-        'finish': args.responseTimestamp,
+        'finish': args.responseTimestamp
     };
 }
 
@@ -220,7 +220,7 @@ function buildBidAfterTimeout(adUnitAuction, args) {
  *
  * @param adUnitAuction
  * @param args
- * @returns {{isNew: number, auction: *, adUnit: string, bidder: string, cpm: *, size: {width, height}, mediaType, source: string}}
+ * @returns {{isNew: number, auction: *, adUnit: string, bidder: string, cpm: *, size: {width, height}, mediaType}}
  */
 function buildImpression(adUnitAuction, args) {
     const auction = utils.deepClone(adUnitAuction);
@@ -236,8 +236,7 @@ function buildImpression(adUnitAuction, args) {
             'width': args.width,
             'height': args.height
         },
-        'mediaType': args.mediaType,
-        'source': args.source || 'client'
+        'mediaType': args.mediaType
     };
 }
 
@@ -382,7 +381,6 @@ function handleBidAdjustment(args) {
         bidderRequest.size.width = args.width || 0;
         bidderRequest.size.height = args.height || 0;
         bidderRequest.mediaType = args.mediaType || '-';
-        bidderRequest.source = args.source || 'client';
     }
 }
 
